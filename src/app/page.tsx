@@ -1,5 +1,14 @@
+import Button from "@/components/ui/Button";
+
 export default function Home() {
   return (
-    <div><h1 className="text-red-800">Message App</h1></div>
+    <Button 
+      variant={"default"}
+      size={"lg"}
+      isLoading={false}
+      >
+      Send Message
+    </Button>
   );
 }
+
