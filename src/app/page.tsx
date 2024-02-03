@@ -1,18 +1,12 @@
-import Button from "@/components/ui/Button";
 import { db } from "@/lib/db";
+import Login from "./login/page";
 
 export default async function Home() {
 
   await db.set("hello", "hello")
 
   return (
-    <Button 
-      variant={"default"}
-      size={"lg"}
-      isLoading={false}
-      >
-      Send Message
-    </Button>
+    <Login />
   );
 }
 
