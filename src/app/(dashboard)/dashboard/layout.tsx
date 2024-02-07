@@ -9,6 +9,8 @@ import { fetchRedis } from "@/helpers/redis";
 import { SidebarOption } from "@/types/typings";
 import SignOutButton from "@/components/signOutButton";
 import FriendRequestOption from "@/components/friendRequestOption";
+import { getFriendsByUserId } from "@/helpers/get-friends";
+import SidebarChatList from "@/components/SidebarChatList";
 
 interface LayoutProps {
   children: ReactNode;
@@ -25,6 +27,8 @@ const sidebarOptions: SidebarOption[] = [
 
 const Layout = async ({ children }: LayoutProps) => {
   const session = await getServerSession(authOptions);
+
+  const friends = await getFriendsByUserId(session.user.id);
 
   const requestCount = (
     (await fetchRedis(
@@ -43,12 +47,18 @@ const Layout = async ({ children }: LayoutProps) => {
           <Icons.Logo className="h-10 w-auto text-indigo-600" />
         </Link>
 
-        <div className="text-xs font-semibold leading-6 text-gray-400">
-          Your chats
-        </div>
+        {friends.length > 0 && (
+          <div className="text-xs font-semibold leading-6 text-gray-400">
+            Your chats
+          </div>
+        )}
 
         <nav className="flex flex-1 flex-col">
           <ul role="list" className="flex flex-1 flex-col gap-y-7">
+            <li>
+              <SidebarChatList sessionId={session.user.id} friends={friends}/>
+            </li>
+
             <li>
               <div className="text-xs font-semibold leading-6 text-gray-400">
                 Overview
@@ -71,14 +81,15 @@ const Layout = async ({ children }: LayoutProps) => {
                     </li>
                   );
                 })}
-              </ul>
-            </li>
 
-            <li>
-              <FriendRequestOption
-                sessionId={session.user.id}
-                initialRequestCount={requestCount}
-              />
+                <li>
+                  <FriendRequestOption
+                    sessionId={session.user.id}
+                    initialRequestCount={requestCount}
+                  />
+                </li>
+
+              </ul>
             </li>
 
             <li className="-mx-6 mt-auto flex items-center">
