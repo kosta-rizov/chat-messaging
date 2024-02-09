@@ -1,9 +1,10 @@
 'use client'
-import { cn } from '@/lib/utils'
+import { cn, toPusherKey } from '@/lib/utils'
 import { Message } from '@/lib/validations/message'
 import Image from 'next/image'
-import { FC, useRef, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import { format } from "date-fns";
+import { pusherClient } from '@/lib/pusher'
 
 interface MessagesProps {
   initialMessages: Message[]
@@ -27,6 +28,27 @@ const Messages: FC<MessagesProps> = ({
   const formatTimestamp = (timestamp: number) => {
     return format(timestamp, 'HH:mm')
   }
+
+  useEffect(() => {
+    // listening
+    pusherClient.subscribe(
+      toPusherKey(`chat:${chatId}`)
+    )
+
+    const messageHandler = (messages: Message) => {
+      setMessages((prev) => [messages, ...prev])
+    }
+    
+    // bind
+    pusherClient.bind('incoming_messages', messageHandler)
+
+    // clean
+    return () => {
+      pusherClient.unsubscribe(toPusherKey(`chat:${chatId}`))
+      pusherClient.unbind('incoming_messages', messageHandler)
+    }
+
+  },[chatId])
 
   return (
     <div
