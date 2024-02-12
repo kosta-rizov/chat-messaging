@@ -1,4 +1,4 @@
-import { Icons } from "@/components/Icons";
+import { Icon, Icons } from "@/components/Icons";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import Image from "next/image";
@@ -28,6 +28,9 @@ const sidebarOptions: SidebarOption[] = [
 const Layout = async ({ children }: LayoutProps) => {
   const session = await getServerSession(authOptions);
 
+  // check if no user
+  if (!session) notFound();
+
   const friends = await getFriendsByUserId(session.user.id);
 
   const requestCount = (
@@ -36,9 +39,6 @@ const Layout = async ({ children }: LayoutProps) => {
       `user:${session?.user.id}:incoming_friend_requests`
     )) as User[]
   ).length;
-
-  // check if no user
-  if (!session) notFound();
 
   return (
     <div className="w-full flex h-screen">

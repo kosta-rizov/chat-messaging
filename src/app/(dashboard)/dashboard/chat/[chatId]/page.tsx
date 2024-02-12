@@ -7,7 +7,8 @@ import { messageArraySchema } from "@/lib/validations/message";
 import { getServerSession } from "next-auth";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { FC } from "react";
+import { ArrowLeftCircle } from 'lucide-react';
+import Link from "next/link";
 
 interface chatProps {
   params: {
@@ -80,6 +81,9 @@ const Chat = async ({ params }: chatProps) => {
           </div>
 
         </div>
+        <Link href='/dashboard' className="md:hidden hover:text-slate-700" >
+          <ArrowLeftCircle />
+        </Link>
       </div>
 
       <Messages
